@@ -1,0 +1,37 @@
+Button {
+    -fx-background-color: rgba(231, 227, 227, 0.85);
+    -fx-font-size: 14px;
+    -fx-padding: 4px 14px;
+    -fx-border-radius: 13;
+    -fx-background-radius: 13;
+    -fx-color-label-visible: #130348;
+    -fx-border-color: #420342 2px solid;
+}
+
+Button:hover {
+    -fx-background-color: #f3fa00;
+    -fx-color: white;
+}
+
+Text {
+    -fx-font-size: 60;
+}
+
+#menuText {
+    -fx-font-size: 54;
+}
+
+#profText {
+    -fx-font-size: 43;
+}
+
+#profButton {
+    -fx-pref-height: 35;
+    -fx-pref-width: 150;
+}
+
+TextField {
+    border : none;
+    border-bottom: 2px red;
+}
+

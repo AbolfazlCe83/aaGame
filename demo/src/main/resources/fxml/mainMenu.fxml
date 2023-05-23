@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+   <children>
+      <ImageView fitHeight="400.0" fitWidth="520.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image requestedHeight="400" requestedWidth="520" url="@../images/background.png" />
+         </image>
+      </ImageView>
+      <VBox alignment="CENTER" blendMode="SCREEN" layoutX="184.0" layoutY="91.0" prefHeight="226.0" prefWidth="151.0" spacing="12" style="-fx-spacing: 13;" stylesheets="@../css/styleSheet.css">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <children>
+            <Button fx:id="resumeButton" mnemonicParsing="false" text="Resume Game" textAlignment="CENTER">
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </Button>
+            <Button fx:id="startButton" layoutX="54.0" layoutY="108.0" mnemonicParsing="false" text="Start New Game" onMouseClicked="#startGame">
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </Button>
+            <Button fx:id="profileButton" layoutX="54.0" layoutY="88.0" mnemonicParsing="false" text="Profile" onMouseClicked="#enterProfileMenu">
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </Button>
+            <Button fx:id="settingButton" layoutX="54.0" layoutY="150.0" mnemonicParsing="false" text="Setting" onMouseClicked="#enterSettingMenu">
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </Button>
+            <Button fx:id="scoreboardButton" layoutX="54.0" layoutY="171.0" mnemonicParsing="false" text="Scoreboard" onMouseClicked="#runScoreboard">
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </Button>
+            <Button fx:id="exitButton" layoutX="54.0" layoutY="192.0" mnemonicParsing="false" onMouseClicked="#exitGame" text="Exit">
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </Button>
+         </children>
+      </VBox>
+      <Text fx:id="menuText" fill="WHITE" layoutX="188.0" layoutY="49.0" opacity="0.92" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Menu" textAlignment="CENTER" wrappingWidth="143.99996337890616">
+         <font>
+            <Font name="Berlin Sans FB Bold" size="54.0" />
+         </font>
+         <effect>
+            <DropShadow>
+               <color>
+                  <Color red="0.9157894849777222" green="0.04409356787800789" blue="0.7123937606811523" />
+               </color>
+            </DropShadow>
+         </effect>
+      </Text>
+   </children>
+</AnchorPane>

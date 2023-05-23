@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<Pane prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.Scoreboard">
+   <children>
+      <ImageView fitHeight="400.0" fitWidth="520.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image requestedHeight="400" requestedWidth="520" url="@../images/scoreboard.png" />
+         </image>
+      </ImageView>
+      <Text fill="WHITE" layoutX="98.0" layoutY="49.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" textAlignment="CENTER">
+         <font>
+            <Font name="Niagara Engraved" size="48.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Text>
+      <Text fill="WHITE" layoutX="256.0" layoutY="49.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" text="Score" textAlignment="CENTER">
+         <font>
+            <Font name="Niagara Engraved" size="48.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Text>
+      <Text fill="WHITE" layoutX="365.0" layoutY="49.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" text="Time" textAlignment="CENTER">
+         <font>
+            <Font name="Niagara Engraved" size="48.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Text>
+      <Rectangle fx:id="first" arcHeight="15.0" arcWidth="15.0" fill="GOLD" height="33.0" layoutX="94.0" layoutY="58.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle fx:id="first1" arcHeight="15.0" arcWidth="15.0" fill="SILVER" height="33.0" layoutX="94.0" layoutY="91.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle fx:id="first11" arcHeight="15.0" arcWidth="15.0" fill="#cd7f32" height="33.0" layoutX="94.0" layoutY="124.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle fx:id="first111" arcHeight="15.0" arcWidth="15.0" fill="#b747b9" height="33.0" layoutX="94.0" layoutY="160.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle fx:id="first1111" arcHeight="15.0" arcWidth="15.0" fill="#b747b9" height="33.0" layoutX="94.0" layoutY="193.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle fx:id="first11111" arcHeight="15.0" arcWidth="15.0" fill="#b747b9" height="33.0" layoutX="94.0" layoutY="226.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle fx:id="first111111" arcHeight="15.0" arcWidth="15.0" fill="#b747b9" height="33.0" layoutX="94.0" layoutY="261.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#b747b9" height="33.0" layoutX="94.0" layoutY="294.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#b747b9" height="33.0" layoutX="94.0" layoutY="327.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#b747b9" height="33.0" layoutX="94.0" layoutY="360.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="121.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="GOLD" height="33.0" layoutX="256.0" layoutY="58.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="GOLD" height="33.0" layoutX="360.0" layoutY="58.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="SILVER" height="33.0" layoutX="256.0" layoutY="91.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="SILVER" height="33.0" layoutX="360.0" layoutY="91.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#cd7f32" height="33.0" layoutX="256.0" layoutY="124.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#cd7f32" height="33.0" layoutX="360.0" layoutY="124.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="256.0" layoutY="160.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="256.0" layoutY="193.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="256.0" layoutY="226.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="256.0" layoutY="261.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="256.0" layoutY="294.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="256.0" layoutY="327.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="256.0" layoutY="360.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="360.0" layoutY="160.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="360.0" layoutY="193.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="360.0" layoutY="226.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="360.0" layoutY="261.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="360.0" layoutY="294.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="360.0" layoutY="327.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#d71dd7" height="33.0" layoutX="360.0" layoutY="360.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" width="66.0" />
+      <Text fx:id="username1" layoutX="103.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1st" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="username2" layoutX="103.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2nd" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="username3" layoutX="103.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3rd" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="username4" layoutX="103.0" layoutY="182.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4th" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="username5" layoutX="103.0" layoutY="215.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5th" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="username6" layoutX="103.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="6th" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="username7" layoutX="103.0" layoutY="283.0" strokeType="OUTSIDE" strokeWidth="0.0" text="7th" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="username8" layoutX="103.0" layoutY="316.0" strokeType="OUTSIDE" strokeWidth="0.0" text="8th" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="username9" layoutX="103.0" layoutY="349.0" strokeType="OUTSIDE" strokeWidth="0.0" text="9th" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="username10" layoutX="103.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10th" wrappingWidth="102.47186279296875">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fx:id="score1" layoutX="266.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="score2" layoutX="266.0" layoutY="111.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="score3" layoutX="266.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="score4" layoutX="266.0" layoutY="180.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="score5" layoutX="266.0" layoutY="213.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="score6" layoutX="266.0" layoutY="246.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="score7" layoutX="266.0" layoutY="281.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="score8" layoutX="266.0" layoutY="314.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="score9" layoutX="266.0" layoutY="347.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="score10" layoutX="266.0" layoutY="380.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time1" layoutX="370.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time2" layoutX="370.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time3" layoutX="370.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time4" layoutX="370.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time5" layoutX="370.0" layoutY="213.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time6" layoutX="370.0" layoutY="245.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time7" layoutX="370.0" layoutY="281.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time8" layoutX="370.0" layoutY="313.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time9" layoutX="370.0" layoutY="346.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Text fx:id="time10" layoutX="370.0" layoutY="380.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="45.98307228088379" />
+      <Button layoutX="444.0" layoutY="353.0" mnemonicParsing="false" text="Back" textAlignment="CENTER" onMouseClicked="#backToMainMenu">
+         <font>
+            <Font size="33.0" />
+         </font>
+      </Button>
+   </children>
+</Pane>
