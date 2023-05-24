@@ -3,6 +3,7 @@ package view;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -158,6 +159,8 @@ public class Game extends Application {
                 String keyName = keyEvent.getCode().getName();
                 if (keyName.equals("Space")) {
                     shootKey(ballNumbers, pane, freeze, lineTransition, score, firstBallNumbers);
+                    if (ballNumbers == Math.floor(firstBallNumbers * 0.75))
+                        applyPhase2(lineTransition);
                     if (ballNumbers == Game.this.firstBallNumbers / 2 + 1)
                         leftBalls.setFill(Color.ORANGE);
                     else if (ballNumbers == 6)
@@ -360,11 +363,30 @@ public class Game extends Application {
 
     private void applyPhase2(LineTransition lineTransition) {
         double firstAngle = lineTransition.getAngle();
+        int randomTime = (int)(Math.random()*(3)+4);
         lineTransition.setAngle(-firstAngle);
-        Timeline right = new Timeline(new KeyFrame(Duration.seconds(4),
+        Timeline right = new Timeline(new KeyFrame(Duration.seconds(randomTime),
                 event -> lineTransition.setAngle(firstAngle)));
-        right.setCycleCount(0);
+        right.setCycleCount(1);
         right.play();
+        right.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                lineTransition.setAngle(firstAngle);
+                Timeline left = new Timeline(new KeyFrame(Duration.seconds(randomTime),
+                        event -> lineTransition.setAngle(-firstAngle)));
+                left.setCycleCount(1);
+                left.play();
+                left.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        lineTransition.setAngle(-firstAngle);
+                        right.setCycleCount(1);
+                        right.play();
+                    }
+                });
+            }
+        });
     }
 
 

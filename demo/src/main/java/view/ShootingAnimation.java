@@ -70,6 +70,7 @@ public class ShootingAnimation extends Transition {
                     line.setEndX(bigX);
                     line.setStartY(ball.getCenterY());
                     line.setEndY(bigY + 75);
+                    this.gamePane.getChildren().add(line);
                     score.setText(String.valueOf(Integer.parseInt(score.getText()) + 2));
                     checkEndGame();
                 } else {

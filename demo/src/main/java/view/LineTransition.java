@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class LineTransition extends Transition {
     private ArrayList<Node> nodes;
     private double speed;
-
     private double angle;
 
     public LineTransition(double speed) {
