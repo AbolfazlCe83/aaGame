@@ -27,7 +27,9 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Circle;
+import model.Player;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Game extends Application {
@@ -158,6 +160,8 @@ public class Game extends Application {
             public void handle(KeyEvent keyEvent) {
                 String keyName = keyEvent.getCode().getName();
                 if (keyName.equals("Space")) {
+                    if (ballNumbers <= Math.floor(firstBallNumbers * 0.75))
+                        increaseRadius(lineTransition, score);
                     shootKey(ballNumbers, pane, freeze, lineTransition, score, firstBallNumbers);
                     if (ballNumbers == Math.floor(firstBallNumbers * 0.75))
                         applyPhase2(lineTransition);
@@ -177,6 +181,103 @@ public class Game extends Application {
         });
         return mainSmallCircle;
     }
+
+    private void increaseRadius(LineTransition lineTransition, Text score) {
+        ArrayList<Circle> balls = lineTransition.getBalls();
+        double firstRadius = 15;
+        {
+            balls.forEach(ball -> ball.setRadius(firstRadius * 1.05));
+            checkEndGame(balls, score);
+            balls.forEach(ball -> ball.setRadius(firstRadius * 1.07));
+            checkEndGame(balls, score);
+            balls.forEach(ball -> ball.setRadius(firstRadius * 1.1));
+            checkEndGame(balls, score);
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1)));
+            timeline.setCycleCount(1);
+            timeline.play();
+            timeline.setOnFinished(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    balls.forEach(ball -> ball.setRadius(firstRadius * 1.07));
+                    balls.forEach(ball -> ball.setRadius(firstRadius * 1.05));
+                    Timeline timeline1 = new Timeline(new KeyFrame(Duration.seconds(1)));
+                    timeline1.setCycleCount(1);
+                    timeline1.play();
+                    timeline1.setOnFinished(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            balls.forEach(ball -> ball.setRadius(firstRadius * 1.05));
+                            checkEndGame(balls, score);
+                            balls.forEach(ball -> ball.setRadius(firstRadius * 1.07));
+                            checkEndGame(balls, score);
+                            balls.forEach(ball -> ball.setRadius(firstRadius * 1.1));
+                            checkEndGame(balls, score);
+                            timeline.play();
+                        }
+                    });
+                }
+            });
+        }
+
+    }
+
+    private void checkEndGame(ArrayList<Circle> balls, Text score) {
+        for (int i = 0; i < balls.size() - 1; i++) {
+            for (int j = i + 1; j < balls.size(); j++) {
+                if (balls.get(i).getBoundsInParent().intersects(balls.get(j).getBoundsInParent())) {
+                    loseGame(score);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void loseGame(Text score) {
+            Pane pane = this.gamePane;
+            pane.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+            VBox vBox = new VBox();
+            vBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+            vBox.setAlignment(Pos.CENTER);
+            vBox.setLayoutX(200);
+            vBox.setLayoutY(150);
+            vBox.setPrefHeight(300);
+            vBox.setPrefWidth(200);
+            vBox.setStyle("-fx-background-color: #9d9393");
+            vBox.setSpacing(50);
+            Text time = new Text("Time: ");
+            Text scoreBoard = new Text("Score: " + score.getText());
+            Button mainMenu = new Button("Main Menu");
+            mainMenu.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    try {
+                        new MainMenu().start(LoginMenu.stage);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            time.setFill(Color.BLACK);
+            scoreBoard.setFill(Color.BLACK);
+            time.setFont(new Font("SansSerif", 15));
+            scoreBoard.setFont(new Font("SansSerif", 15));
+            mainMenu.setTextFill(Color.BLACK);
+            mainMenu.setFont(new Font("SansSerif", 15));
+            vBox.getChildren().addAll(time, scoreBoard, mainMenu);
+
+            Text lose = new Text("You Lose :)!!!!");
+            lose.setFont(new Font(30));
+            lose.setFill(Color.RED);
+            lose.setX(210);
+            lose.setY(180);
+
+            Player player = Player.getLoggedInPlayer();
+            if (player != null) {
+                player.setScore(Integer.parseInt(score.getText()));
+                Player.savePlayers();
+            }
+            pane.getChildren().addAll(vBox, lose);
+        }
 
     private void pause(LineTransition lineTransition) {
         Pane pane = this.gamePane;
@@ -362,25 +463,24 @@ public class Game extends Application {
     }
 
     private void applyPhase2(LineTransition lineTransition) {
-        double firstAngle = lineTransition.getAngle();
         int randomTime = (int)(Math.random()*(3)+4);
-        lineTransition.setAngle(-firstAngle);
+        lineTransition.setAngle(-lineTransition.getAngle());
         Timeline right = new Timeline(new KeyFrame(Duration.seconds(randomTime),
-                event -> lineTransition.setAngle(firstAngle)));
+                event -> lineTransition.setAngle(-lineTransition.getAngle())));
         right.setCycleCount(1);
         right.play();
         right.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                lineTransition.setAngle(firstAngle);
+                lineTransition.setAngle(lineTransition.getAngle());
                 Timeline left = new Timeline(new KeyFrame(Duration.seconds(randomTime),
-                        event -> lineTransition.setAngle(-firstAngle)));
+                        event -> lineTransition.setAngle(-lineTransition.getAngle())));
                 left.setCycleCount(1);
                 left.play();
                 left.setOnFinished(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        lineTransition.setAngle(-firstAngle);
+                        lineTransition.setAngle(-lineTransition.getAngle());
                         right.setCycleCount(1);
                         right.play();
                     }

@@ -3,6 +3,7 @@ module view {
     requires javafx.fxml;
     requires javafx.web;
     requires com.google.gson;
+    requires javafx.media;
 
 
     exports view;
