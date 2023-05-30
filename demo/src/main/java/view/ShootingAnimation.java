@@ -3,6 +3,7 @@ package view;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.Transition;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -31,7 +32,6 @@ public class ShootingAnimation extends Transition {
     private double windSpeed;
     private LineTransition lineTransition;
     private Text score;
-
     private int firstBallNumbers;
 
     public ShootingAnimation(Pane gamePane, Circle ball, Text ballNumber, double windSpeed, Text freeze, LineTransition lineTransition, Text score, int firstBallNumbers) {
@@ -55,12 +55,20 @@ public class ShootingAnimation extends Transition {
         double smallY = ball.getCenterY();
         double distance = Math.abs(Math.sqrt(Math.pow((smallX - bigX), 2) + Math.pow((smallY - bigY), 2)));
         double x = 0;
-        if (windSpeed == 1.2) {
+        if (windSpeed == 6) {
             x = ball.getCenterX() + 1;
-        } else if (windSpeed == 1.5) {
+        } else if (windSpeed == 12) {
             x = ball.getCenterX() + 1.5;
-        } else
+        } else if (windSpeed == 0) {
+            x = ball.getCenterX() + 0;
+        } else if (windSpeed == 15)
             x = ball.getCenterX() + 1.8;
+        else if (windSpeed == -6) {
+            x = ball.getCenterX() - 1;
+        } else if (windSpeed == -12) {
+            x = ball.getCenterX() - 1.5;
+        } else if (windSpeed == -15)
+            x = ball.getCenterX() - 1.8;
         double y = ball.getCenterY() - 10;
         if (distance <= 230) {
             if (!endGame()) {
@@ -107,8 +115,106 @@ public class ShootingAnimation extends Transition {
         ballNumber.setX(x);
     }
 
+    private void increaseRadius(LineTransition lineTransition, Text score) {
+        ArrayList<Circle> balls = lineTransition.getBalls();
+        double firstRadius = 15;
+        {
+            balls.forEach(ball -> ball.setRadius(firstRadius * 1.05));
+            check(balls, score, lineTransition);
+            balls.forEach(ball -> ball.setRadius(firstRadius * 1.07));
+            check(balls, score, lineTransition);
+            balls.forEach(ball -> ball.setRadius(firstRadius * 1.1));
+            check(balls, score, lineTransition);
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1)));
+            timeline.setCycleCount(1);
+            timeline.play();
+            timeline.setOnFinished(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    balls.forEach(ball -> ball.setRadius(firstRadius * 1.07));
+                    balls.forEach(ball -> ball.setRadius(firstRadius * 1.05));
+                    Timeline timeline1 = new Timeline(new KeyFrame(Duration.seconds(1)));
+                    timeline1.setCycleCount(1);
+                    timeline1.play();
+                    timeline1.setOnFinished(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            balls.forEach(ball -> ball.setRadius(firstRadius * 1.05));
+                            check(balls, score, lineTransition);
+                            balls.forEach(ball -> ball.setRadius(firstRadius * 1.07));
+                            check(balls, score, lineTransition);
+                            balls.forEach(ball -> ball.setRadius(firstRadius * 1.1));
+                            check(balls, score, lineTransition);
+                            timeline.play();
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    private void check(ArrayList<Circle> balls, Text score, LineTransition lineTransition) {
+        for (int i = 0; i < balls.size() - 1; i++) {
+            for (int j = i + 1; j < balls.size(); j++) {
+                if (balls.get(i).getBoundsInParent().intersects(balls.get(j).getBoundsInParent())) {
+                    lineTransition.stop();
+                    loseGame(score);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void loseGame(Text score) {
+        Pane pane = this.gamePane;
+        pane.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+        VBox vBox = new VBox();
+        vBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setLayoutX(200);
+        vBox.setLayoutY(150);
+        vBox.setPrefHeight(300);
+        vBox.setPrefWidth(200);
+        vBox.setStyle("-fx-background-color: #9d9393");
+        vBox.setSpacing(50);
+        Text time = new Text("Time: ");
+        Text scoreBoard = new Text("Score: " + score.getText());
+        Button mainMenu = new Button("Main Menu");
+        mainMenu.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                try {
+                    new MainMenu().start(LoginMenu.stage);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        time.setFill(Color.BLACK);
+        scoreBoard.setFill(Color.BLACK);
+        time.setFont(new Font("SansSerif", 15));
+        scoreBoard.setFont(new Font("SansSerif", 15));
+        mainMenu.setTextFill(Color.BLACK);
+        mainMenu.setFont(new Font("SansSerif", 15));
+        vBox.getChildren().addAll(time, scoreBoard, mainMenu);
+
+        Text lose = new Text("You Lose :)!!!!");
+        lose.setFont(new Font(30));
+        lose.setFill(Color.RED);
+        lose.setX(210);
+        lose.setY(180);
+
+        Player player = Player.getLoggedInPlayer();
+        if (player != null) {
+            player.setScore(Integer.parseInt(score.getText()));
+            Player.savePlayers();
+        }
+        pane.getChildren().addAll(vBox, lose);
+    }
+
 
     private void endTheGame() {
+        Game.audioClip.stop();
         Pane pane = this.gamePane;
         VBox vBox = new VBox();
         vBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));

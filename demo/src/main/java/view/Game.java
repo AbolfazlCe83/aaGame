@@ -18,6 +18,9 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -46,8 +49,11 @@ public class Game extends Application {
 
     private ArrayList<Circle> smallBalls;
     private ArrayList<Line> lines;
+    public static AudioClip audioClip;
 
     public Game() {
+        Game.audioClip = new AudioClip(Game.class.getResource("/musics/game.wav").toExternalForm());
+        Game.audioClip.setCycleCount(-1);
         initializeVariables();
         this.smallBalls = new ArrayList<>();
         this.lines = new ArrayList<>();
@@ -66,6 +72,7 @@ public class Game extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        audioClip.play();
         Pane pane = FXMLLoader.load(Game.class.getResource("/fxml/game.fxml"));
         this.gamePane = pane;
         this.gameStage = stage;
@@ -79,11 +86,29 @@ public class Game extends Application {
         text.setY(655);
         text.setFill(Color.WHITE);
 
+        Text timerTitle = new Text("Timer");
+        timerTitle.setX(300);
+        timerTitle.setY(65);
+        timerTitle.setFill(Color.BLACK);
+        timerTitle.setFont(new Font(25));
+
         Text leftOverBalls = new Text(String.valueOf(ballNumbers));
         leftOverBalls.setX(60);
         leftOverBalls.setFill(Color.RED);
         leftOverBalls.setFont(new Font(25));
         leftOverBalls.setY(65);
+
+        Text throwRate = new Text("Throw Rate");
+        throwRate.setX(450);
+        throwRate.setFill(Color.BLACK);
+        throwRate.setFont(new Font(25));
+        throwRate.setY(660);
+
+        Text degree = new Text("0");
+        degree.setX(500);
+        degree.setFill(Color.PURPLE);
+        degree.setFont(new Font(25));
+        degree.setY(685);
 
         Text score = new Text("0");
         score.setFill(Color.BLUE);
@@ -121,7 +146,7 @@ public class Game extends Application {
         LineTransition lineTransition = new LineTransition(rotationSpeed);
         lineTransition.addNode(new Text("1"));
         lineTransition.play();
-        Circle mainSmallCircle = createMainCircle(pane, text, freeze, lineTransition, leftOverBalls, score, firstBallNumbers);
+        Circle mainSmallCircle = createMainCircle(pane, text, freeze, lineTransition, leftOverBalls, score, firstBallNumbers, degree);
 
 
         Rotate rotate = new Rotate();
@@ -144,6 +169,8 @@ public class Game extends Application {
         pane.getChildren().add(leftBalls);
         pane.getChildren().add(score);
         pane.getChildren().add(playerScoreTitle);
+        pane.getChildren().add(throwRate);
+        pane.getChildren().add(degree);
 
 
         Scene scene = new Scene(pane);
@@ -153,17 +180,22 @@ public class Game extends Application {
         stage.show();
     }
 
-    private Circle createMainCircle(Pane pane, Text text, Text freeze, LineTransition lineTransition, Text leftBalls, Text score, int firstBallNumbers) {
+    private Circle createMainCircle(Pane pane, Text text, Text freeze, LineTransition lineTransition, Text leftBalls, Text score, int firstBallNumbers, Text degree) {
         Circle mainSmallCircle = new Circle(300, 650, 15);
         mainSmallCircle.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 String keyName = keyEvent.getCode().getName();
                 if (keyName.equals("Space")) {
-                    if (ballNumbers <= Math.floor(firstBallNumbers * 0.75))
+                    if (ballNumbers == Math.ceil(firstBallNumbers * 0.75)) {
                         increaseRadius(lineTransition, score);
+                    }
+                    if (ballNumbers == Math.ceil(firstBallNumbers * 0.5))
+                        setWind(degree);
+                    if (ballNumbers == Math.ceil(firstBallNumbers * 0.5))
+                        setVisible(lineTransition);
                     shootKey(ballNumbers, pane, freeze, lineTransition, score, firstBallNumbers);
-                    if (ballNumbers == Math.floor(firstBallNumbers * 0.75))
+                    if (ballNumbers == Math.ceil(firstBallNumbers * 0.75))
                         applyPhase2(lineTransition);
                     if (ballNumbers == Game.this.firstBallNumbers / 2 + 1)
                         leftBalls.setFill(Color.ORANGE);
@@ -182,49 +214,157 @@ public class Game extends Application {
         return mainSmallCircle;
     }
 
+    private void setWind(Text degree) {
+        degree.setText("-6");
+        this.setWindSpeed(-6);
+        Timeline one = new Timeline(new KeyFrame(Duration.seconds(3)));
+        one.setCycleCount(1);
+        one.play();
+        one.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                degree.setText("-12");
+                setWindSpeed(-12);
+                Timeline two = new Timeline(new KeyFrame(Duration.seconds(3)));
+                two.setCycleCount(1);
+                two.play();
+                two.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        degree.setText("-15");
+                        setWindSpeed(-15);
+                        Timeline three = new Timeline(new KeyFrame(Duration.seconds(3)));
+                        three.setCycleCount(1);
+                        three.play();
+                        three.setOnFinished(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent actionEvent) {
+                                degree.setText("0");
+                                setWindSpeed(0);
+                                Timeline four = new Timeline(new KeyFrame(Duration.seconds(3)));
+                                four.setCycleCount(1);
+                                four.play();
+                                four.setOnFinished(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent actionEvent) {
+                                        degree.setText("6");
+                                        setWindSpeed(6);
+                                        Timeline five = new Timeline(new KeyFrame(Duration.seconds(3)));
+                                        five.setCycleCount(1);
+                                        five.play();
+                                        five.setOnFinished(new EventHandler<ActionEvent>() {
+                                            @Override
+                                            public void handle(ActionEvent actionEvent) {
+                                                degree.setText("12");
+                                                setWindSpeed(12);
+                                                Timeline six = new Timeline(new KeyFrame(Duration.seconds(3)));
+                                                six.setCycleCount(1);
+                                                six.play();
+                                                six.setOnFinished(new EventHandler<ActionEvent>() {
+                                                    @Override
+                                                    public void handle(ActionEvent actionEvent) {
+                                                        degree.setText("15");
+                                                        setWindSpeed(15);
+                                                        Timeline seven = new Timeline(new KeyFrame(Duration.seconds(3)));
+                                                        seven.setCycleCount(1);
+                                                        seven.play();
+                                                        seven.setOnFinished(new EventHandler<ActionEvent>() {
+                                                            @Override
+                                                            public void handle(ActionEvent actionEvent) {
+                                                                degree.setText("-6");
+                                                                setWindSpeed(-6);
+                                                                one.play();
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    private void setVisible(LineTransition lineTransition) {
+        Timeline delay = new Timeline(new KeyFrame(Duration.seconds(1.5)));
+        delay.setCycleCount(1);
+        delay.play();
+
+        lineTransition.setVisible(false);
+        Timeline white = new Timeline(new KeyFrame(Duration.seconds(1)));
+        white.setCycleCount(1);
+        white.play();
+        white.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                lineTransition.setVisible(true);
+                Timeline black = new Timeline(new KeyFrame(Duration.seconds(1)));
+                black.setCycleCount(1);
+                black.play();
+                black.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        lineTransition.setVisible(false);
+                        white.play();
+                    }
+                });
+            }
+        });
+    }
+
     private void increaseRadius(LineTransition lineTransition, Text score) {
         ArrayList<Circle> balls = lineTransition.getBalls();
         double firstRadius = 15;
+        Timeline delay = new Timeline(new KeyFrame(Duration.seconds(1)));
+        delay.setCycleCount(1);
+        delay.play();
         {
-            balls.forEach(ball -> ball.setRadius(firstRadius * 1.05));
-            checkEndGame(balls, score);
-            balls.forEach(ball -> ball.setRadius(firstRadius * 1.07));
-            checkEndGame(balls, score);
-            balls.forEach(ball -> ball.setRadius(firstRadius * 1.1));
-            checkEndGame(balls, score);
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1)));
+            lineTransition.setRadius(firstRadius * 1.05);
+            checkEndGame(score, lineTransition);
+            lineTransition.setRadius(firstRadius * 1.07);
+            checkEndGame(score, lineTransition);
+            lineTransition.setRadius(firstRadius * 1.1);
+            checkEndGame(score, lineTransition);
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1.3)));
             timeline.setCycleCount(1);
             timeline.play();
             timeline.setOnFinished(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    balls.forEach(ball -> ball.setRadius(firstRadius * 1.07));
-                    balls.forEach(ball -> ball.setRadius(firstRadius * 1.05));
-                    Timeline timeline1 = new Timeline(new KeyFrame(Duration.seconds(1)));
+                    lineTransition.setRadius(firstRadius * 1.07);
+                    lineTransition.setRadius(firstRadius * 1.05);
+                    lineTransition.setRadius(firstRadius);
+                    Timeline timeline1 = new Timeline(new KeyFrame(Duration.seconds(1.3)));
                     timeline1.setCycleCount(1);
                     timeline1.play();
                     timeline1.setOnFinished(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
-                            balls.forEach(ball -> ball.setRadius(firstRadius * 1.05));
-                            checkEndGame(balls, score);
-                            balls.forEach(ball -> ball.setRadius(firstRadius * 1.07));
-                            checkEndGame(balls, score);
-                            balls.forEach(ball -> ball.setRadius(firstRadius * 1.1));
-                            checkEndGame(balls, score);
+                            lineTransition.setRadius(firstRadius * 1.05);
+                            checkEndGame(score, lineTransition);
+                            lineTransition.setRadius(firstRadius * 1.07);
+                            checkEndGame(score, lineTransition);
+                            lineTransition.setRadius(firstRadius * 1.1);
+                            checkEndGame(score, lineTransition);
                             timeline.play();
                         }
                     });
                 }
             });
         }
-
     }
 
-    private void checkEndGame(ArrayList<Circle> balls, Text score) {
+    private void checkEndGame(Text score, LineTransition lineTransition) {
+        ArrayList<Circle> balls = lineTransition.getBalls();
         for (int i = 0; i < balls.size() - 1; i++) {
             for (int j = i + 1; j < balls.size(); j++) {
                 if (balls.get(i).getBoundsInParent().intersects(balls.get(j).getBoundsInParent())) {
+                    lineTransition.stop();
                     loseGame(score);
                     break;
                 }
@@ -452,6 +592,9 @@ public class Game extends Application {
 
     private void shootKey(int ballNumbers, Pane pane, Text freeze, LineTransition lineTransition, Text score, int firstBallNumbers) {
         Circle ball = new Circle(300, 655, 15);
+        AudioClip audioClip1 = new AudioClip(Game.class.getResource("/musics/shoot.wav").toExternalForm());
+        audioClip1.setCycleCount(1);
+        audioClip1.play();
         Text ballNumber = new Text(String.valueOf(ballNumbers));
         ballNumber.setFill(Color.WHITE);
         ballNumber.setX(295);

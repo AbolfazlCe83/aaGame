@@ -3,6 +3,8 @@ package view;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import model.Circle;
@@ -60,5 +62,14 @@ public class LineTransition extends Transition {
             if (node instanceof Circle)
                 balls.add((Circle) node);
         return balls;
+    }
+
+    public void setVisible(boolean b) {
+        this.nodes.forEach(node -> node.setVisible(b));
+    }
+
+    public void setRadius(double radius) {
+        ArrayList<Circle> balls = this.getBalls();
+        balls.forEach(ball -> ball.setRadius(radius));
     }
 }

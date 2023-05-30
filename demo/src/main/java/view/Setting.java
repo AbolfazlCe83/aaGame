@@ -23,7 +23,7 @@ import java.io.IOException;
 
 public class Setting extends Application {
     public static int rotationSpeed = 10;
-    public static double windSpeed = 1.5;
+    public static double windSpeed = 0;
     public static int freezeTime = 5;
     public static int ballNumbers = 15;
     public static String shootKey = "Space";
