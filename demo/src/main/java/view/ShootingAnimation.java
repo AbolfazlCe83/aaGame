@@ -33,8 +33,11 @@ public class ShootingAnimation extends Transition {
     private LineTransition lineTransition;
     private Text score;
     private int firstBallNumbers;
+    private Text timerMinute;
+    private Text timerSecond;
+    private Timeline timeline;
 
-    public ShootingAnimation(Pane gamePane, Circle ball, Text ballNumber, double windSpeed, Text freeze, LineTransition lineTransition, Text score, int firstBallNumbers) {
+    public ShootingAnimation(Pane gamePane, Circle ball, Text ballNumber, double windSpeed, Text freeze, LineTransition lineTransition, Text score, int firstBallNumbers, Text timerMinute, Text timerSecond, Timeline timeline) {
         this.freeze = freeze;
         this.ballNumber = ballNumber;
         this.gamePane = gamePane;
@@ -43,6 +46,9 @@ public class ShootingAnimation extends Transition {
         this.lineTransition = lineTransition;
         this.score = score;
         this.firstBallNumbers = firstBallNumbers;
+        this.timerMinute = timerMinute;
+        this.timerSecond = timerSecond;
+        this.timeline = timeline;
         this.setCycleCount(-1);
         this.setCycleDuration(Duration.millis(1000));
     }
@@ -166,6 +172,8 @@ public class ShootingAnimation extends Transition {
     }
 
     private void loseGame(Text score) {
+        Game.audioClip.stop();
+        this.timeline.stop();
         Pane pane = this.gamePane;
         pane.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
         VBox vBox = new VBox();
@@ -177,7 +185,11 @@ public class ShootingAnimation extends Transition {
         vBox.setPrefWidth(200);
         vBox.setStyle("-fx-background-color: #9d9393");
         vBox.setSpacing(50);
-        Text time = new Text("Time: ");
+        String second = String.valueOf(60 - Integer.parseInt(timerSecond.getText()));
+        if (Integer.parseInt(second) <= 9)
+            second = "0" + second;
+        Text time = new Text("Time: 0" + (1 - Integer.parseInt(timerMinute.getText())) + ":" + second);
+        String levelTime = "0" + (1 - Integer.parseInt(timerMinute.getText())) + ":" + second;
         Text scoreBoard = new Text("Score: " + score.getText());
         Button mainMenu = new Button("Main Menu");
         mainMenu.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -207,6 +219,7 @@ public class ShootingAnimation extends Transition {
         Player player = Player.getLoggedInPlayer();
         if (player != null) {
             player.setScore(Integer.parseInt(score.getText()));
+            player.setLevelTime(levelTime);
             Player.savePlayers();
         }
         pane.getChildren().addAll(vBox, lose);
@@ -215,6 +228,7 @@ public class ShootingAnimation extends Transition {
 
     private void endTheGame() {
         Game.audioClip.stop();
+        this.timeline.stop();
         Pane pane = this.gamePane;
         VBox vBox = new VBox();
         vBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
@@ -225,7 +239,11 @@ public class ShootingAnimation extends Transition {
         vBox.setPrefWidth(200);
         vBox.setStyle("-fx-background-color: #9d9393");
         vBox.setSpacing(50);
-        Text time = new Text("Time: ");
+        String second = String.valueOf(60 - Integer.parseInt(timerSecond.getText()));
+        if (Integer.parseInt(second) <= 9)
+            second = "0" + second;
+        Text time = new Text("Time: 0" + (1 - Integer.parseInt(timerMinute.getText())) + ":" + second);
+        String levelTime = "0" + (1 - Integer.parseInt(timerMinute.getText())) + ":" + second;
         Text score = new Text("Score: " + this.score.getText());
         Button mainMenu = new Button("Main Menu");
         mainMenu.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -255,6 +273,7 @@ public class ShootingAnimation extends Transition {
         Player player = Player.getLoggedInPlayer();
         if (player != null) {
             player.setScore(Integer.parseInt(this.score.getText()));
+            player.setLevelTime(levelTime);
             Player.savePlayers();
         }
         pane.getChildren().addAll(vBox, lose);
@@ -270,6 +289,8 @@ public class ShootingAnimation extends Transition {
     }
 
     private void checkEndGame() {
+        timeline.stop();
+        Game.audioClip.stop();
         gamePane.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
         this.stop();
         this.lineTransition.stop();
@@ -283,7 +304,11 @@ public class ShootingAnimation extends Transition {
         vBox.setPrefWidth(200);
         vBox.setStyle("-fx-background-color: #9d9393");
         vBox.setSpacing(50);
-        Text time = new Text("Time: ");
+        String second = String.valueOf(60 - Integer.parseInt(timerSecond.getText()));
+        if (Integer.parseInt(second) <= 9)
+            second = "0" + second;
+        Text time = new Text("Time: 0" + (1 - Integer.parseInt(timerMinute.getText())) + ":" + second);
+        String levelTime = "0" + (1 - Integer.parseInt(timerMinute.getText())) + ":" + second;
         Text PlayerScore = new Text("Score: " + this.score.getText());
         Button mainMenu = new Button("Main Menu");
         mainMenu.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -313,6 +338,7 @@ public class ShootingAnimation extends Transition {
         Player player = Player.getLoggedInPlayer();
         if (player != null) {
             player.setScore(Integer.parseInt(this.score.getText()));
+            player.setLevelTime(levelTime);
             Player.savePlayers();
         }
         pane.getChildren().addAll(vBox, win);

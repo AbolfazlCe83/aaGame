@@ -132,9 +132,18 @@ public class Scoreboard extends Application {
         for (int i = 0; i < players.size() - 1; i++)
             for (int j = i + 1; j < players.size(); j++)
                 if ((players.get(i).getScore() == players.get(j).getScore())
-                        && (players.get(i).getLevelTime() > players.get(j).getLevelTime()))
+                        && checkTime(players.get(i), players.get(j)))
                     Collections.swap(players, i, j);
         return players;
+    }
+
+    private static boolean checkTime(Player player, Player player1) {
+        int time = 0, time1 = 0;
+        time += (player.getLevelTime().charAt(1)) * 60 + (player.getLevelTime().charAt(3) * 10 + player.getLevelTime().charAt(4));
+        time1 +=(player1.getLevelTime().charAt(1)) * 60 + (player1.getLevelTime().charAt(3) * 10 + player1.getLevelTime().charAt(4));
+        if (time > time1)
+            return true;
+        return false;
     }
 
     public void backToMainMenu(MouseEvent mouseEvent) throws Exception {

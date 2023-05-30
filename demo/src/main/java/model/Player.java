@@ -16,14 +16,14 @@ public class Player {
     private String username;
     private String password;
     private int score;
-    private int levelTime;
+    private String levelTime;
     private String avatarResource;
 
     public Player(String username, String password) {
         this.username = username;
         this.password = password;
         this.score = 0;
-        this.levelTime = 0;
+        this.levelTime = "00:00";
     }
 
     public static Player getPlayerByUsername(String username) {
@@ -95,11 +95,11 @@ public class Player {
         this.score = score;
     }
 
-    public int getLevelTime() {
+    public String getLevelTime() {
         return levelTime;
     }
 
-    public void setLevelTime(int levelTime) {
+    public void setLevelTime(String levelTime) {
         this.levelTime = levelTime;
     }
 

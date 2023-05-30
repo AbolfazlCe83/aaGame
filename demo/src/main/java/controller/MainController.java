@@ -30,11 +30,6 @@ public class MainController {
     }
 
     public void startGame(MouseEvent mouseEvent) throws Exception {
-        String shootKey = Setting.shootKey;
-        double rotationSpeed = Setting.rotationSpeed;
-        double windSpeed = Setting.windSpeed;
-        int freezeTime = Setting.freezeTime;
-        int ballNumbers = Setting.ballNumbers;
         Game game = new Game();
         game.start(LoginMenu.stage);
     }

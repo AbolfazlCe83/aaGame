@@ -28,6 +28,8 @@ public class Setting extends Application {
     public static int ballNumbers = 15;
     public static String shootKey = "Space";
 
+    public static boolean music = true;
+
     @Override
     public void start(Stage stage) throws Exception {
         BorderPane borderPane = FXMLLoader.load(Setting.class.getResource("/fxml/setting.fxml"));
@@ -99,7 +101,16 @@ public class Setting extends Application {
                     }
                 }
             });
-            vBox.getChildren().addAll(gameDifficulty, ballNumbers, selectMap, controlButton, darkMood, mainMenu);
+
+            Button mute = new Button("Mute");
+            mute.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    Setting.music = !music;
+                }
+            });
+
+            vBox.getChildren().addAll(gameDifficulty, ballNumbers, selectMap, controlButton, darkMood, mute, mainMenu);
         }
         borderPane.setCenter(vBox);
 

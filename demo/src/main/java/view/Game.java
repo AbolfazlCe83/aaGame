@@ -19,8 +19,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -40,16 +38,18 @@ public class Game extends Application {
     private static Game currentGame;
     private double rotationSpeed;
     private double windSpeed;
-    private  int freezeTime;
+    private int freezeTime;
     private int ballNumbers;
     private int firstBallNumbers;
     private String shootKey;
+    public boolean music;
 
     private Stage gameStage;
 
     private ArrayList<Circle> smallBalls;
     private ArrayList<Line> lines;
     public static AudioClip audioClip;
+    private Timeline timeline;
 
     public Game() {
         Game.audioClip = new AudioClip(Game.class.getResource("/musics/game.wav").toExternalForm());
@@ -57,6 +57,7 @@ public class Game extends Application {
         initializeVariables();
         this.smallBalls = new ArrayList<>();
         this.lines = new ArrayList<>();
+        this.music = Setting.music;
         Game.currentGame = this;
     }
 
@@ -72,7 +73,8 @@ public class Game extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        audioClip.play();
+        if (this.music)
+            audioClip.play();
         Pane pane = FXMLLoader.load(Game.class.getResource("/fxml/game.fxml"));
         this.gamePane = pane;
         this.gameStage = stage;
@@ -87,10 +89,26 @@ public class Game extends Application {
         text.setFill(Color.WHITE);
 
         Text timerTitle = new Text("Timer");
-        timerTitle.setX(300);
-        timerTitle.setY(65);
+        timerTitle.setX(500);
+        timerTitle.setY(40);
         timerTitle.setFill(Color.BLACK);
         timerTitle.setFont(new Font(25));
+
+        Text timerMinute = new Text("02");
+        Text point = new Text(":");
+        Text timerSecond = new Text("00");
+        timerMinute.setX(512);
+        point.setX(535);
+        timerSecond.setX(543);
+        timerMinute.setFill(Color.PURPLE);
+        timerSecond.setFill(Color.PURPLE);
+        point.setFill(Color.PURPLE);
+        timerMinute.setY(65);
+        timerSecond.setY(65);
+        point.setY(65);
+        timerMinute.setFont(new Font(17));
+        point.setFont(new Font(17));
+        timerSecond.setFont(new Font(17));
 
         Text leftOverBalls = new Text(String.valueOf(ballNumbers));
         leftOverBalls.setX(60);
@@ -112,12 +130,12 @@ public class Game extends Application {
 
         Text score = new Text("0");
         score.setFill(Color.BLUE);
-        score.setX(515);
+        score.setX(315);
         score.setY(65);
         score.setFont(new Font(25));
 
         Text playerScoreTitle = new Text("Player Score");
-        playerScoreTitle.setX(450);
+        playerScoreTitle.setX(250);
         playerScoreTitle.setY(40);
         playerScoreTitle.setFill(Color.BLACK);
         playerScoreTitle.setFont(new Font(25));
@@ -146,7 +164,11 @@ public class Game extends Application {
         LineTransition lineTransition = new LineTransition(rotationSpeed);
         lineTransition.addNode(new Text("1"));
         lineTransition.play();
-        Circle mainSmallCircle = createMainCircle(pane, text, freeze, lineTransition, leftOverBalls, score, firstBallNumbers, degree);
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> setTimer(timerMinute, timerSecond, score, lineTransition)));
+        timeline.setCycleCount(-1);
+        timeline.play();
+        this.timeline = timeline;
+        Circle mainSmallCircle = createMainCircle(pane, text, freeze, lineTransition, leftOverBalls, score, firstBallNumbers, degree, timerMinute, timerSecond, timeline);
 
 
         Rotate rotate = new Rotate();
@@ -171,7 +193,8 @@ public class Game extends Application {
         pane.getChildren().add(playerScoreTitle);
         pane.getChildren().add(throwRate);
         pane.getChildren().add(degree);
-
+        pane.getChildren().add(timerTitle);
+        pane.getChildren().addAll(timerMinute, point, timerSecond);
 
         Scene scene = new Scene(pane);
         stage.setScene(scene);
@@ -180,7 +203,21 @@ public class Game extends Application {
         stage.show();
     }
 
-    private Circle createMainCircle(Pane pane, Text text, Text freeze, LineTransition lineTransition, Text leftBalls, Text score, int firstBallNumbers, Text degree) {
+    private void setTimer(Text timerMinute, Text timerSecond, Text score, LineTransition lineTransition) {
+        if (Integer.parseInt(timerSecond.getText()) == 0 && Integer.parseInt(timerMinute.getText()) == 0 && ballNumbers > 0) {
+            loseGame(score, timerSecond, timerMinute, lineTransition);
+        } else if (Integer.parseInt(timerSecond.getText()) == 0) {
+            timerSecond.setText("59");
+            timerMinute.setText("0" + (Integer.parseInt(timerMinute.getText()) - 1));
+        } else {
+            if (Integer.parseInt(timerSecond.getText()) <= 9) {
+                timerSecond.setText("0" + (Integer.parseInt(timerSecond.getText()) - 1));
+            } else
+                timerSecond.setText(String.valueOf(Integer.parseInt(timerSecond.getText()) - 1));
+        }
+    }
+
+    private Circle createMainCircle(Pane pane, Text text, Text freeze, LineTransition lineTransition, Text leftBalls, Text score, int firstBallNumbers, Text degree, Text timerMinute, Text timerSecond, Timeline timeline) {
         Circle mainSmallCircle = new Circle(300, 650, 15);
         mainSmallCircle.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -188,13 +225,13 @@ public class Game extends Application {
                 String keyName = keyEvent.getCode().getName();
                 if (keyName.equals("Space")) {
                     if (ballNumbers == Math.ceil(firstBallNumbers * 0.75)) {
-                        increaseRadius(lineTransition, score);
+                        increaseRadius(lineTransition, score, timerMinute, timerSecond);
                     }
                     if (ballNumbers == Math.ceil(firstBallNumbers * 0.5))
                         setWind(degree);
                     if (ballNumbers == Math.ceil(firstBallNumbers * 0.5))
                         setVisible(lineTransition);
-                    shootKey(ballNumbers, pane, freeze, lineTransition, score, firstBallNumbers);
+                    shootKey(ballNumbers, pane, freeze, lineTransition, score, firstBallNumbers, timerMinute, timerSecond, timeline, mainSmallCircle);
                     if (ballNumbers == Math.ceil(firstBallNumbers * 0.75))
                         applyPhase2(lineTransition);
                     if (ballNumbers == Game.this.firstBallNumbers / 2 + 1)
@@ -207,11 +244,28 @@ public class Game extends Application {
                 } else if (keyName.equals("Tab")) {
                     freeze(pane, freezeTime, lineTransition, freeze);
                 } else if (keyName.equals("Esc")) {
-                    pause(lineTransition);
-                }
+                    pause(lineTransition, timeline);
+                } else if (keyName.equals("Right"))
+                    goRight(mainSmallCircle, text);
+                else if (keyName.equals("Left"))
+                    goLeft(mainSmallCircle, text);
             }
         });
         return mainSmallCircle;
+    }
+
+    private void goLeft(Circle mainSmallCircle, Text text) {
+        if (mainSmallCircle.getCenterX() > 45) {
+            mainSmallCircle.setCenterX(mainSmallCircle.getCenterX() - 15);
+            text.setX(text.getX() - 15);
+        }
+    }
+
+    private void goRight(Circle mainSmallCircle, Text text) {
+        if (mainSmallCircle.getCenterX() < 535) {
+            mainSmallCircle.setCenterX(mainSmallCircle.getCenterX() + 15);
+            text.setX(text.getX() + 15);
+        }
     }
 
     private void setWind(Text degree) {
@@ -317,7 +371,7 @@ public class Game extends Application {
         });
     }
 
-    private void increaseRadius(LineTransition lineTransition, Text score) {
+    private void increaseRadius(LineTransition lineTransition, Text score, Text timerMinute, Text timerSecond) {
         ArrayList<Circle> balls = lineTransition.getBalls();
         double firstRadius = 15;
         Timeline delay = new Timeline(new KeyFrame(Duration.seconds(1)));
@@ -325,11 +379,11 @@ public class Game extends Application {
         delay.play();
         {
             lineTransition.setRadius(firstRadius * 1.05);
-            checkEndGame(score, lineTransition);
+            checkEndGame(score, lineTransition, timerMinute, timerSecond);
             lineTransition.setRadius(firstRadius * 1.07);
-            checkEndGame(score, lineTransition);
+            checkEndGame(score, lineTransition, timerMinute, timerSecond);
             lineTransition.setRadius(firstRadius * 1.1);
-            checkEndGame(score, lineTransition);
+            checkEndGame(score, lineTransition, timerMinute, timerSecond);
             Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1.3)));
             timeline.setCycleCount(1);
             timeline.play();
@@ -346,11 +400,11 @@ public class Game extends Application {
                         @Override
                         public void handle(ActionEvent actionEvent) {
                             lineTransition.setRadius(firstRadius * 1.05);
-                            checkEndGame(score, lineTransition);
+                            checkEndGame(score, lineTransition, timerMinute, timerSecond);
                             lineTransition.setRadius(firstRadius * 1.07);
-                            checkEndGame(score, lineTransition);
+                            checkEndGame(score, lineTransition, timerMinute, timerSecond);
                             lineTransition.setRadius(firstRadius * 1.1);
-                            checkEndGame(score, lineTransition);
+                            checkEndGame(score, lineTransition, timerMinute, timerSecond);
                             timeline.play();
                         }
                     });
@@ -359,71 +413,80 @@ public class Game extends Application {
         }
     }
 
-    private void checkEndGame(Text score, LineTransition lineTransition) {
+    private void checkEndGame(Text score, LineTransition lineTransition, Text timerMinute, Text timerSecond) {
         ArrayList<Circle> balls = lineTransition.getBalls();
         for (int i = 0; i < balls.size() - 1; i++) {
             for (int j = i + 1; j < balls.size(); j++) {
                 if (balls.get(i).getBoundsInParent().intersects(balls.get(j).getBoundsInParent())) {
                     lineTransition.stop();
-                    loseGame(score);
+                    loseGame(score, timerSecond, timerMinute, lineTransition);
                     break;
                 }
             }
         }
     }
 
-    private void loseGame(Text score) {
-            Pane pane = this.gamePane;
-            pane.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
-            VBox vBox = new VBox();
-            vBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-            vBox.setAlignment(Pos.CENTER);
-            vBox.setLayoutX(200);
-            vBox.setLayoutY(150);
-            vBox.setPrefHeight(300);
-            vBox.setPrefWidth(200);
-            vBox.setStyle("-fx-background-color: #9d9393");
-            vBox.setSpacing(50);
-            Text time = new Text("Time: ");
-            Text scoreBoard = new Text("Score: " + score.getText());
-            Button mainMenu = new Button("Main Menu");
-            mainMenu.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
-                    try {
-                        new MainMenu().start(LoginMenu.stage);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+    private void loseGame(Text score, Text timerSecond, Text timerMinute, LineTransition lineTransition) {
+        this.timeline.stop();
+        Game.audioClip.stop();
+        lineTransition.stop();
+        Pane pane = this.gamePane;
+        pane.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+        VBox vBox = new VBox();
+        vBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setLayoutX(200);
+        vBox.setLayoutY(150);
+        vBox.setPrefHeight(300);
+        vBox.setPrefWidth(200);
+        vBox.setStyle("-fx-background-color: #9d9393");
+        vBox.setSpacing(50);
+        String second = String.valueOf(60 - Integer.parseInt(timerSecond.getText()));
+        if (Integer.parseInt(second) <= 9)
+            second = "0" + second;
+        Text time = new Text("Time: 0" + (1 - Integer.parseInt(timerMinute.getText())) + ":" + second);
+        String levelTime = "0" + (1 - Integer.parseInt(timerMinute.getText())) + ":" + second;
+        Text scoreBoard = new Text("Score: " + score.getText());
+        Button mainMenu = new Button("Main Menu");
+        mainMenu.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                try {
+                    new MainMenu().start(LoginMenu.stage);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            });
-            time.setFill(Color.BLACK);
-            scoreBoard.setFill(Color.BLACK);
-            time.setFont(new Font("SansSerif", 15));
-            scoreBoard.setFont(new Font("SansSerif", 15));
-            mainMenu.setTextFill(Color.BLACK);
-            mainMenu.setFont(new Font("SansSerif", 15));
-            vBox.getChildren().addAll(time, scoreBoard, mainMenu);
-
-            Text lose = new Text("You Lose :)!!!!");
-            lose.setFont(new Font(30));
-            lose.setFill(Color.RED);
-            lose.setX(210);
-            lose.setY(180);
-
-            Player player = Player.getLoggedInPlayer();
-            if (player != null) {
-                player.setScore(Integer.parseInt(score.getText()));
-                Player.savePlayers();
             }
-            pane.getChildren().addAll(vBox, lose);
-        }
+        });
+        time.setFill(Color.BLACK);
+        scoreBoard.setFill(Color.BLACK);
+        time.setFont(new Font("SansSerif", 15));
+        scoreBoard.setFont(new Font("SansSerif", 15));
+        mainMenu.setTextFill(Color.BLACK);
+        mainMenu.setFont(new Font("SansSerif", 15));
+        vBox.getChildren().addAll(time, scoreBoard, mainMenu);
 
-    private void pause(LineTransition lineTransition) {
+        Text lose = new Text("You Lose :)!!!!");
+        lose.setFont(new Font(30));
+        lose.setFill(Color.RED);
+        lose.setX(210);
+        lose.setY(180);
+
+        Player player = Player.getLoggedInPlayer();
+        if (player != null) {
+            player.setScore(Integer.parseInt(score.getText()));
+            player.setLevelTime(levelTime);
+            Player.savePlayers();
+        }
+        pane.getChildren().addAll(vBox, lose);
+    }
+
+    private void pause(LineTransition lineTransition, Timeline timeline) {
         Pane pane = this.gamePane;
         Stage gameStage = this.gameStage;
 
         lineTransition.stop();
+        timeline.pause();
 
         VBox pauseMenu = new VBox();
         pauseMenu.setAlignment(Pos.CENTER);
@@ -485,6 +548,7 @@ public class Game extends Application {
             public void handle(MouseEvent mouseEvent) {
                 pane.getChildren().remove(pauseMenu);
                 lineTransition.play();
+                timeline.play();
             }
         });
 
@@ -492,9 +556,23 @@ public class Game extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 try {
+                    Game.audioClip.stop();
                     new Game().start(gameStage);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
+                }
+            }
+        });
+
+        mute.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (music) {
+                    Game.audioClip.stop();
+                    music = false;
+                } else {
+                    Game.audioClip.play();
+                    music = true;
                 }
             }
         });
@@ -503,6 +581,7 @@ public class Game extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 try {
+                    Game.audioClip.stop();
                     new MainMenu().start(gameStage);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -518,6 +597,81 @@ public class Game extends Application {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+            }
+        });
+
+        changeMusic.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                showChangeMusicMenu(pane);
+            }
+        });
+
+    }
+
+    private void showChangeMusicMenu(Pane pane) {
+        VBox musicMenu = new VBox();
+        musicMenu.setAlignment(Pos.CENTER);
+        musicMenu.setLayoutX(200);
+        musicMenu.setLayoutY(150);
+        musicMenu.setPrefHeight(320);
+        musicMenu.setPrefWidth(200);
+        musicMenu.setStyle("-fx-background-color: #9d9393");
+        musicMenu.setSpacing(50);
+        musicMenu.setFocusTraversable(false);
+
+        Button music1 = new Button("Music1");
+        music1.setFont(new Font(18));
+        music1.setTextFill(Color.DARKBLUE);
+        music1.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+        music1.setStyle("-fx-background-radius: 15");
+        music1.setFocusTraversable(false);
+
+        Button music2 = new Button("Music2");
+        music2.setFont(new Font(18));
+        music2.setTextFill(Color.DARKBLUE);
+        music2.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+        music2.setStyle("-fx-background-radius: 15");
+        music2.setFocusTraversable(false);
+
+        Button music3 = new Button("Music3");
+        music3.setFont(new Font(18));
+        music3.setTextFill(Color.DARKBLUE);
+        music3.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+        music3.setStyle("-fx-background-radius: 15");
+        music3.setFocusTraversable(false);
+
+        musicMenu.getChildren().addAll(music1, music2, music3);
+
+        pane.getChildren().add(musicMenu);
+
+        music1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Game.audioClip.stop();
+                Game.audioClip = new AudioClip(Game.class.getResource("/musics/game.wav").toExternalForm());
+                Game.audioClip.play();
+                pane.getChildren().remove(musicMenu);
+            }
+        });
+
+        music2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Game.audioClip.stop();
+                Game.audioClip = new AudioClip(Game.class.getResource("/musics/game2.wav").toExternalForm());
+                Game.audioClip.play();
+                pane.getChildren().remove(musicMenu);
+            }
+        });
+
+        music3.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Game.audioClip.stop();
+                Game.audioClip = new AudioClip(Game.class.getResource("/musics/game3.wav").toExternalForm());
+                Game.audioClip.play();
+                pane.getChildren().remove(musicMenu);
             }
         });
 
@@ -590,8 +744,8 @@ public class Game extends Application {
         }
     }
 
-    private void shootKey(int ballNumbers, Pane pane, Text freeze, LineTransition lineTransition, Text score, int firstBallNumbers) {
-        Circle ball = new Circle(300, 655, 15);
+    private void shootKey(int ballNumbers, Pane pane, Text freeze, LineTransition lineTransition, Text score, int firstBallNumbers, Text timerMinute, Text timerSecond, Timeline timeline, Circle mainSmallCircle) {
+        Circle ball = new Circle(mainSmallCircle.getCenterX(), mainSmallCircle.getCenterY(), 15);
         AudioClip audioClip1 = new AudioClip(Game.class.getResource("/musics/shoot.wav").toExternalForm());
         audioClip1.setCycleCount(1);
         audioClip1.play();
@@ -601,12 +755,12 @@ public class Game extends Application {
         ballNumber.setY(685);
         this.gamePane.getChildren().add(ball);
         this.gamePane.getChildren().add(ballNumber);
-        ShootingAnimation shootingAnimation = new ShootingAnimation(pane, ball, ballNumber, windSpeed, freeze, lineTransition, score, firstBallNumbers);
+        ShootingAnimation shootingAnimation = new ShootingAnimation(pane, ball, ballNumber, windSpeed, freeze, lineTransition, score, firstBallNumbers, timerMinute, timerSecond, timeline);
         shootingAnimation.play();
     }
 
     private void applyPhase2(LineTransition lineTransition) {
-        int randomTime = (int)(Math.random()*(3)+4);
+        int randomTime = (int) (Math.random() * (3) + 4);
         lineTransition.setAngle(-lineTransition.getAngle());
         Timeline right = new Timeline(new KeyFrame(Duration.seconds(randomTime),
                 event -> lineTransition.setAngle(-lineTransition.getAngle())));
@@ -694,4 +848,6 @@ public class Game extends Application {
     public ArrayList<Line> getLines() {
         return this.lines;
     }
+
+
 }
